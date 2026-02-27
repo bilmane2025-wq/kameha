@@ -53,10 +53,11 @@ function reducer(state, action) {
 }
 
 export function useTransactions() {
-  const initial = loadStorage(STORAGE_KEY, INITIAL_TRANSACTIONS);
-  nextId = Math.max(...initial.map((t) => t.id), nextId);
-
-  const [transactions, dispatch] = useReducer(reducer, initial);
+  const [transactions, dispatch] = useReducer(reducer, null, () => {
+    const saved = loadStorage(STORAGE_KEY, INITIAL_TRANSACTIONS);
+    nextId = Math.max(...saved.map((t) => t.id), nextId);
+    return saved;
+  });
 
   useEffect(() => {
     saveStorage(STORAGE_KEY, transactions);
